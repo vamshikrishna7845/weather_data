@@ -1,0 +1,51 @@
+Problem 1: Data Modelling
+
+Answer: Created a Postgres Database named “crop_prediction” and connected the same with Django in settings.py.
+
+Below are the models created. 
+
+class WeatherData(models.Model):
+    date = models.IntegerField()
+    max_temp = models.IntegerField()
+    min_temp = models.IntegerField()
+    precipitation = models.IntegerField()
+    weather_station = models.CharField(max_length=255)
+
+    class meta:
+        unique_together = ('date', 'weather_station')
+
+    def __str__(self):
+        return f'{self.date}'
+
+
+class YieldData(models.Model):
+    year = models.IntegerField(unique=True)
+    qty_harvested = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.year}'
+
+
+
+The models are then migrated to database using python manage.py makemigrations and python manage.py migrate
+-----------------------------------------------------------------------------------------------------------
+Problem 2: Ingestion
+
+Answer: The code containing the ingestion part is written in the src/data_ingestion.py file. Also, for logging and capturing, created a decorator.
+-----------------------------------------------------------------------------------------------------------
+Problem 3: Data Analytics
+
+Answer: The analysis part code is written in src/data_analysis.py file. It creates the average max, min temp based on weather station year wise. It create a new data frame which is then converted into a table using the below model.
+
+class StatisticsData(models.Model):
+    weather_station = models.CharField(max_length=255)
+    year = models.IntegerField()
+    max_temp = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    min_temp = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    precipitation = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+-----------------------------------------------------------------------------------------------------------
+Problem 4: Rest API
+
+Answer: 3 api end points are created as the requirements and the code for the same is written under crop_prediction/rest_apis/views. 
+
+View for each api is created with filter as date and station id required. Serializers are also created where required and are put under crop_prediction/rest_apis/request.
